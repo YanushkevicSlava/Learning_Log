@@ -23,6 +23,7 @@ def topic(request, topic_id):
     context = {'topic': topic, 'entries': entries}
     return render(request, 'learning_logs/topic.html', context)
 
+
 def new_topic(request):
     """Определяет новую тему."""
     if request.method != 'POST':
@@ -36,5 +37,5 @@ def new_topic(request):
             return redirect('learning_logs:topics')
 
     # Вывести пустую или недействительную форму.
-    context = {'form: form'}
+    context = {'form': form}
     return render(request, 'learning_logs/new_topic.html', context)
