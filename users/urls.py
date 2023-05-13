@@ -4,8 +4,7 @@ from django.urls import path, include
 
 
 app_name = 'users'
-
-urlpattrens = [
+urlpatterns = [
     # Включить URL персонализации по умолчанию.
     path('', include('django.contrib.auth.urls')),
 ]
