@@ -9,5 +9,5 @@ urlpatterns = [
     # Включить URL персонализации по умолчанию.
     path('', include('django.contrib.auth.urls')),
     # Страница регистрации.
-    path('register/', views.register, name='register')
+    path('register/', views.register, name='register'),
 ]
