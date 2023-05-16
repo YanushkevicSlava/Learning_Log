@@ -11,7 +11,6 @@ def register(request):
     else:
         # Обработка заполненой формы.
         form = UserCreationForm(data=request.POST)
-
         if form.is_valid():
             new_user = form.save()
             # Выполнение входа и перенаправление на домашнюю страницу.
@@ -20,6 +19,6 @@ def register(request):
 
     # Вывести пустую или недействительную форму.
     context = {'form': form}
-    return render(request, 'users/register.html', context)
+    return render(request, 'registration/register.html', context)
 
 # Create your views here.
