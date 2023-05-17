@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 
@@ -14,7 +15,7 @@ def index(request):
 @login_required
 def topics(reqest):
     """Выводит список тем."""
-    topics = Topic.objects.order_by('date_added')
+    topics = Topic.objects.filter(owner=reqest.user).order_by('date_added')
     context = {'topics': topics}
     return render(reqest, 'learning_logs/topics.html', context)
 
@@ -22,6 +23,10 @@ def topics(reqest):
 @login_required
 def topic(request, topic_id):
     topic = Topic.objects.get(id=topic_id)
+    # Проверка того, что тема принадлежит текущему пользователю.
+    if topic.owner != request.user:
+        raise Http404
+
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic, 'entries': entries}
     return render(request, 'learning_logs/topic.html', context)
@@ -37,6 +42,8 @@ def new_topic(request):
         # Отправлены данные POST; обработать данные.
         form = TopicForm(data=request.POST)
         if form.is_valid():
+            new_topic = form.save(commit=False)
+            new_topic.owner = request.user
             form.save()
             return redirect('learning_logs:topics')
 
@@ -70,7 +77,8 @@ def edit_entry(request, entry_id):
     """Редактирует существующую запись."""
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
-
+    if topic.owner != request.user:
+        raise Http404
     if request.method != 'POST':
         # Исходный запрос; форма заполнения данными текущей записи.
         form = EntryForm(instance=entry)
